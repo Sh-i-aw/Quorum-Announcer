@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Quorum Announcer",
+  "description": "Oh hohoho",
+  "version": "1.0",
+  "action": {
+    "default_popup": "hello.html"
+  },
+  "content_scripts": [
+    {
+    "matches": ["https://meet.google.com/*"], 
+    "js": ["scripts/announcer.js"]
+    }
+  ]
+}
