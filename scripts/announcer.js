@@ -1,54 +1,69 @@
+function waitForCondition(conditionFn, interval = 800) {
+    return new Promise((resolve) => {
+        function check() {
+            const result = conditionFn();
+            if (result) {
+                resolve(result);
+            } else {
+                setTimeout(check, interval);
+            }
+        }
 
-function getIcon() {
-    let icon
-    console.log(`trying to get icon`)
-    do {
-        icon = document.querySelector('button[aria-label="People"]');
-        if (icon) break;
-        setTimeout(() => {}, 800);
-    } while (!icon)
-
-    return icon;
+        check();
+    });
 }
 
-function getBubble(icon) {
-    let bubble;
-    console.log(`trying to get bubble`)
-
-    do {
-        bubble = icon.closest('span')?.nextElementSibling;
-        if (bubble) break;
-        setTimeout(() => {}, 800);
-    } while (!bubble);
-    return bubble;
+async function getIcon() {
+    console.log('Trying to get icon');
+    return await waitForCondition(() => document.querySelector('button[aria-label="People"]'));
 }
 
-function getNumberDiv() {
-    let icon = getIcon();
-    let bubble = getBubble(icon);
-
-    let numberDiv;
-    do {
-        numberDiv = bubble.firstElementChild;
-        if (numberDiv) break;
-        setTimeout(() => {}, 800);
-    } while (!numberDiv)
-    return numberDiv;
+async function getBubble(icon) {
+    console.log('Trying to get bubble');
+    // The arrow function captures `icon` and passes it to `waitForCondition`
+    return await waitForCondition(() => icon.closest('span')?.nextElementSibling);
 }
 
-function getParticipantCount() {
-    let numberDiv = getNumberDiv();
+async function getNumberDiv(bubble) {
+    console.log('Trying to get number div');
+    // The arrow function captures `bubble` and passes it to `waitForCondition`
+    return await waitForCondition(() => bubble.firstElementChild);
+}
 
-    console.log('found number div')
-    let count;
-    do {
-        const match = numberDiv.textContent.match(/\d+/);
-        count = match ? parseInt(match[0]) : 0;
-    } while(count < 54)
+async function getParticipantCount() {
+    try {
+        const icon = await getIcon();
+        const bubble = await getBubble(icon);
+        const numberDiv = await getNumberDiv(bubble);
 
-    toggleMute();
-    announceQuorum();
-  }
+        console.log('Found number div:', numberDiv.textContent);
+
+        await pollForCount(numberDiv, 54);
+
+        toggleMute();
+        announceQuorum();
+    } catch (error) {
+        console.error(error.message);
+    }
+}
+
+function pollForCount(numberDiv, targetCount, interval = 250) {
+    return new Promise((resolve) => {
+        function check() {
+            const match = numberDiv.textContent.match(/\d+/);
+            const count = match ? parseInt(match[0]) : 0;
+            console.log(`Current count: ${count}`);
+
+            if (count >= targetCount) {
+                resolve();
+            } else {
+                setTimeout(check, interval);
+            }
+        }
+
+        check();
+    });
+}
 
   function announceQuorum() {
     const windowSynth = window.speechSynthesis;
