@@ -38,7 +38,7 @@ async function getParticipantCount() {
 
         console.log('Found number div:', numberDiv.textContent);
 
-        await pollForCount(numberDiv, 54);
+        await pollForCount(numberDiv, 55);
 
         toggleMute();
         announceQuorum();
@@ -74,7 +74,7 @@ function pollForCount(numberDiv, targetCount, interval = 250) {
 
     function setVoice() {
       let voices = windowSynth.getVoices();
-      utterance.voice = voices.find((voice) => voice.name === 'Good News');
+      utterance.voice = voices.find((voice) => voice.name === 'Fred');
       console.log(utterance.voice);
       windowSynth.speak(utterance);
     }
@@ -98,4 +98,22 @@ function pollForCount(numberDiv, targetCount, interval = 250) {
     document.dispatchEvent(event);
   }
 
-  setTimeout(getParticipantCount, 3500);
+// chrome.runtime.onMessage.addListener(
+//     function(message, sender, sendResponse) {
+//         console.log(message);
+//         sendResponse('boo');
+//     }
+// );
+
+chrome.runtime.onMessage.addListener(
+    function(request, sender, sendResponse) {
+        // console.log(sender.tab ?
+        //     "from a content script:" + sender.tab.url :
+        //     "from the extension");
+
+        sendResponse({message: `announcer has received new count ${request.count}`});
+
+    }
+);
+
+setTimeout(getParticipantCount, 3500);

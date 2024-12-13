@@ -4,8 +4,9 @@
   "description": "Oh hohoho",
   "version": "1.0",
   "action": {
-    "default_popup": "hello.html"
+    "default_popup": "announceConfig.html"
   },
+  "permissions": ["activeTab"],
   "content_scripts": [
     {
     "matches": ["https://meet.google.com/*"],
