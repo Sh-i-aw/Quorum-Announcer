@@ -98,21 +98,17 @@ function pollForCount(numberDiv, targetCount, interval = 250) {
     document.dispatchEvent(event);
   }
 
-// chrome.runtime.onMessage.addListener(
-//     function(message, sender, sendResponse) {
-//         console.log(message);
-//         sendResponse('boo');
-//     }
-// );
 
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         // console.log(sender.tab ?
         //     "from a content script:" + sender.tab.url :
         //     "from the extension");
-
-        sendResponse({message: `announcer has received new count ${request.count}`});
-
+        if(request.type === "toggle"){
+            sendResponse({message: `announcer has been turned ${request.power ? 'on' : 'off'}, received new count ${request.count}`});
+        } else {
+            sendResponse({message: `announcer has received new count ${request.count}`});
+        }
     }
 );
 
