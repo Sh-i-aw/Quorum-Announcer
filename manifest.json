@@ -13,7 +13,11 @@
     "exclude_matches": [
       "https://meet.google.com/landing"
     ],
-    "js": ["scripts/announcer.js"]
+    "js": [
+      "scripts/helpers.js",
+      "scripts/announcer.js"
+    ],
+    "type": "module"
     }
   ]
 }
