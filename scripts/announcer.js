@@ -104,11 +104,8 @@ chrome.runtime.onMessage.addListener(
         // console.log(sender.tab ?
         //     "from a content script:" + sender.tab.url :
         //     "from the extension");
-        if(request.type === "toggle"){
-            sendResponse({message: `announcer has been turned ${request.power ? 'on' : 'off'}, received new count ${request.count}`});
-        } else {
-            sendResponse({message: `announcer has received new count ${request.count}`});
-        }
+
+        sendResponse({message: `announcer has been turned ${request.power ? 'on' : 'off'}, received new count ${request.count}`});
     }
 );
 
