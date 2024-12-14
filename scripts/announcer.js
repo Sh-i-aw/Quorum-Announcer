@@ -1,4 +1,6 @@
-async function getParticipantCount() {
+let announcerIsOn = false;
+let pollingTimeoutId = null;
+async function getParticipantCount(quorumCount) {
     try {
         const icon = await getIcon();
         const bubble = await getBubble(icon);
@@ -6,13 +8,36 @@ async function getParticipantCount() {
 
         console.log('Found number div:', numberDiv.textContent);
 
-        await pollForCount(numberDiv, 55);
+        await pollForCount(numberDiv, quorumCount);
 
         toggleMute();
         announceQuorum();
     } catch (error) {
         console.error(error.message);
     }
+}
+
+function pollForCount(numberDiv, targetCount, interval = 250) {
+    return new Promise((resolve) => {
+        function check() {
+            if (! announcerIsOn){
+                resolve('quiet time!');
+                return;
+            }
+
+            const match = numberDiv.textContent.match(/\d+/);
+            const count = match ? parseInt(match[0]) : 0;
+            console.log(`Current count: ${count}`);
+
+            if (count >= targetCount) {
+                resolve();
+            } else {
+                pollingTimeoutId = setTimeout(check, interval);
+            }
+        }
+
+        check();
+    });
 }
 
 
@@ -38,16 +63,26 @@ async function getParticipantCount() {
     }
   }
 
-
+function announcerPowerDown() {
+    announcerIsOn = false;
+    if (pollingTimeoutId) {
+        clearTimeout(pollingTimeoutId);
+        pollingTimeoutId = null;
+    }
+}
 
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         // console.log(sender.tab ?
         //     "from a content script:" + sender.tab.url :
         //     "from the extension");
-
-        sendResponse({message: `announcer has been turned ${request.power ? 'on' : 'off'}, received new count ${request.count}`});
+        if (request.power === true){
+            announcerIsOn = true;
+            getParticipantCount(request.count).then((message) => console.log(message));
+            sendResponse({message: `announcer has been turned ${request.power ? 'on' : 'off'}, received new count ${request.count}`});
+        } else {
+            announcerPowerDown();
+            sendResponse({message: `announcer has been turned ${request.power ? 'on' : 'off'}`});
+        }
     }
 );
-
-setTimeout(getParticipantCount, 3500);

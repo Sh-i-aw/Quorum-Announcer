@@ -30,23 +30,7 @@ async function getNumberDiv(bubble) {
     return await waitForCondition(() => bubble.firstElementChild);
 }
 
-function pollForCount(numberDiv, targetCount, interval = 250) {
-    return new Promise((resolve) => {
-        function check() {
-            const match = numberDiv.textContent.match(/\d+/);
-            const count = match ? parseInt(match[0]) : 0;
-            console.log(`Current count: ${count}`);
 
-            if (count >= targetCount) {
-                resolve();
-            } else {
-                setTimeout(check, interval);
-            }
-        }
-
-        check();
-    });
-}
 
 function toggleMute() {
     const event = new KeyboardEvent('keydown', {

@@ -6,12 +6,11 @@ document.addEventListener('DOMContentLoaded', () => {
     announcerToggle.addEventListener('change', () => {
 
         if (! announcerToggle.checked) {
-
+            hollerAtContentScript(false, 0);
         }
         if (announcerToggle.checked){
-            let quorumVal = countInput.value;
             // Get the active tab
-            hollerAtContentScript(true, quorumVal);
+            hollerAtContentScript(true, countInput.value);
         }
     });
 });
