@@ -2,7 +2,7 @@ let announcerIsOn = false;
 let pollingTimeoutId = null;
 
 console.log('content script loaded ');
-async function getParticipantCount(quorumCount) {
+async function announcerPowerUp(quorumCount, selectedVoice) {
     try {
         const icon = await getIcon();
         const bubble = await getBubble(icon);
@@ -13,7 +13,7 @@ async function getParticipantCount(quorumCount) {
         await pollForCount(numberDiv, quorumCount);
 
         toggleMute();
-        announceQuorum();
+        announceQuorum(selectedVoice);
     } catch (error) {
         console.error(error.message);
     }
@@ -43,7 +43,7 @@ function pollForCount(numberDiv, targetCount, interval = 250) {
 }
 
 
-  function announceQuorum() {
+  function announceQuorum(selectedVoice) {
     const windowSynth = window.speechSynthesis;
     const message = 'Quorum.';
 
@@ -52,7 +52,7 @@ function pollForCount(numberDiv, targetCount, interval = 250) {
 
     function setVoice() {
       let voices = windowSynth.getVoices();
-      utterance.voice = voices.find((voice) => voice.name === 'Fred');
+      utterance.voice = voices.find((voice) => voice.name === selectedVoice);
       console.log(utterance.voice);
       windowSynth.speak(utterance);
     }
@@ -80,7 +80,7 @@ chrome.runtime.onMessage.addListener(
         //     "from the extension");
         if (request.power === true){
             announcerIsOn = true;
-            getParticipantCount(request.count);
+            announcerPowerUp(request.count, request.voiceName);
             sendResponse({message: `announcer has been turned ${request.power ? 'on' : 'off'}, received new count ${request.count}`});
         } else {
             announcerPowerDown();

@@ -45,14 +45,14 @@ document.addEventListener('DOMContentLoaded', () => {
     announcerToggle.addEventListener('change', () => {
 
         if (! announcerToggle.checked) {
-            hollerAtContentScript(false, 0, statusBanner);
+            hollerAtContentScript(false, 0, '', statusBanner);
             configControls.forEach((input) => {
                 input.disabled = false;
             });
             return;
         }
 
-        hollerAtContentScript(true, countInput.value, statusBanner);
+        hollerAtContentScript(true, countInput.value, voiceSelect.value, statusBanner);
         configControls.forEach((input) => {
             input.disabled = true;
         });
