@@ -2,12 +2,15 @@ let statusBanner;
 document.addEventListener('DOMContentLoaded', () => {
     const synth = window.speechSynthesis;
     let voices;
+
     const countInput = document.querySelector('#quorumCount');
     const announcerToggle = document.querySelector('#announcerToggle');
     const configControls = document.querySelectorAll(".configInput");
 
     const languageSelect = document.querySelector('#languageSelect');
     const voiceSelect = document.querySelector('#voiceSelect');
+    const voiceTest = document.querySelector('#voiceTest');
+
     statusBanner = document.querySelector('#status');
 
     if (synth.getVoices().length === 0) {
@@ -58,6 +61,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
     });
+
+    voiceTest.addEventListener('click', () => {
+        const utterance = new SpeechSynthesisUtterance('I am your quorum announcer.');
+        utterance.lang = "en-US";
+
+        utterance.voice = voices.find((voice) => voice.name === voiceSelect.value);
+        synth.speak(utterance);
+
+    })
+
 });
 
 
