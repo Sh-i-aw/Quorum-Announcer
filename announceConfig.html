@@ -10,23 +10,25 @@
     <fieldset>
         <legend> How many people count as Quorum?</legend>
         <label> Quorum Count
-            <input type="number" id="quorumCount">
+            <input type="number" id="quorumCount"  class="configInput" value="55">
         </label>
     </fieldset>
 
     <fieldset>
         <legend> Select Announcer Voice </legend>
-        <select>
-            <option>Choose Language</option>
+        <select  class="configInput" id="languageSelect">
+            <option value="en">en-Anywhere</option>
         </select>
-        <select class="bg-red-300">
+        <select class="configInput" id="voiceSelect">
             <option>Choose Voice</option>
         </select>
 
         <div>
-            <button> Test </button>
+            <button class="configInput"> Test </button>
         </div>
     </fieldset>
+
+    <span id="status"> Idle </span>
 
     <script type="text/javascript" src="config.js"></script>
     </body>

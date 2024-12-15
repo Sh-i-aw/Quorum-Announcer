@@ -1,5 +1,7 @@
 let announcerIsOn = false;
 let pollingTimeoutId = null;
+
+console.log('content script loaded ');
 async function getParticipantCount(quorumCount) {
     try {
         const icon = await getIcon();
@@ -78,7 +80,7 @@ chrome.runtime.onMessage.addListener(
         //     "from the extension");
         if (request.power === true){
             announcerIsOn = true;
-            getParticipantCount(request.count).then((message) => console.log(message));
+            getParticipantCount(request.count);
             sendResponse({message: `announcer has been turned ${request.power ? 'on' : 'off'}, received new count ${request.count}`});
         } else {
             announcerPowerDown();
